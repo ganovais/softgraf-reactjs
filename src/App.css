@@ -2,7 +2,6 @@
   height: 100vh;
   width: 100%;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
 }
@@ -23,5 +22,4 @@
 #title {
   font-size: 62px;
   transition: font-size, 5s;
-  display: none;
 }
