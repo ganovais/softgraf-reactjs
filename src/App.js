@@ -1,18 +1,42 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './App.css';
 import { Introduction } from './Introduction';
 
 function App() {
-  const [inputText, setInputText] = useState('Softgraf');
-  const [age, setAge] = useState(0);
+  const [posts, setPosts] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
-  function handleButtonClicked() {
-    const h1 = document.getElementById('title');
-    h1.style.color = 'green';
-    h1.style.fontSize = '31px';
+  useEffect(() => {
+    fetch('https://jsonplaceholder.typicode.com/posts')
+      .then((response) => response.json())
+      .then((data) => {
+        setPosts(data);
+      });
+  }, []);
+
+  function handleItemClicked(post_id) {
+    const copyPosts = [...posts];
+    const postIndex = copyPosts.findIndex((post) => post.id === post_id);
+
+    if (postIndex > -1) {
+      copyPosts.splice(postIndex, 1);
+    }
+
+    setPosts(copyPosts);
   }
 
-  return <Introduction />;
+  return (
+    <div>
+      <ul>
+        {posts.length &&
+          posts.map((post) => (
+            <li key={post.id} onClick={() => handleItemClicked(post.id)}>
+              {post.id} - {post.title}
+            </li>
+          ))}
+      </ul>
+    </div>
+  );
 }
 
 export default App;
