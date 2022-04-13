@@ -11,7 +11,7 @@ function App() {
    // useEffect(() => {
    //    setTimeout(() => {
    //       setTheme(theme_white);
-   //    }, 10000);
+   //    }, 5000);
    // }, []);
 
    return (
