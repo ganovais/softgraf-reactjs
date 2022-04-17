@@ -13,8 +13,47 @@ import {
 import { CustomInput } from "../../components/Input";
 import { FiLock, FiSend, FiUser } from "react-icons/fi";
 import { Button } from "../../components/Button";
+import { useForm } from "react-hook-form";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useState } from "react";
+
+interface LoginFormData {
+   email: string;
+   password: string;
+}
+
+const loginSchema = yup
+   .object({
+      email: yup
+         .string()
+         .required("E-mail obrigatório")
+         .email("E-mail inválido"),
+      password: yup
+         .string()
+         .required("Senha obrigatória")
+         .min(6, "No mínimo 6 caracteres"),
+   })
+   .required();
 
 export function Login() {
+   const [isShowingPassword, setIsShowingPassword] = useState(false);
+   const {
+      register,
+      handleSubmit,
+      formState: { errors },
+   } = useForm<LoginFormData>({
+      resolver: yupResolver(loginSchema),
+   });
+
+   const onSubmit = (data: LoginFormData) => {
+      console.log(data);
+   };
+
+   function showPassword() {
+      setIsShowingPassword(!isShowingPassword);
+   }
+
    return (
       <Container>
          <DivLeft>
@@ -38,17 +77,28 @@ export function Login() {
             />
             <Title>Login</Title>
 
-            <Form>
-               <CustomInput label="E-mail" leftIcon={<FiUser />} />
+            <Form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
                <CustomInput
-                  type="password"
+                  label="E-mail"
+                  leftIcon={<FiUser />}
+                  {...register("email")}
+                  error={errors.email}
+               />
+
+               <CustomInput
+                  isPassword
+                  type={isShowingPassword ? "text" : "password"}
                   label="Senha"
                   leftIcon={<FiLock />}
+                  {...register("password")}
+                  error={errors.password}
+                  showPassword={showPassword}
+                  isShowingPassword={isShowingPassword}
                />
 
                <FooterForm>
-                  <RegisterLink>Criar uma conta</RegisterLink>
-                  <Button type="button" title="Entrar" icon={<FiSend />} />
+                  <RegisterLink to="register">Criar uma conta</RegisterLink>
+                  <Button type="submit" title="Entrar" icon={<FiSend />} />
                </FooterForm>
             </Form>
          </DivRight>

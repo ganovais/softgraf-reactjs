@@ -60,6 +60,13 @@ export const RegisterLink = styled(Link)`
    text-decoration: none;
    color: ${({ theme }) => theme.colors.texts.title};
 
+   display: flex;
+   align-items: center;
+
+   & > svg {
+      margin-right: 20px;
+   }
+
    &:hover {
       color: ${({ theme }) => theme.colors.orange_700};
    }

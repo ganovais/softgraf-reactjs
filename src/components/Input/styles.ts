@@ -1,4 +1,10 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
+
+interface ContentProps {
+   isFilled: boolean;
+   isFocused: boolean;
+   error: boolean;
+}
 
 export const Container = styled.div`
    width: 100%;
@@ -28,9 +34,10 @@ export const Label = styled.div`
    margin-bottom: 8px;
 `;
 
-export const Content = styled.div`
+export const Content = styled.div<ContentProps>`
    background: ${({ theme }) => theme.colors.grey_50};
    opacity: 0.8;
+   border: 2px solid transparent;
    height: 60px;
    width: 100%;
    border-radius: 4px;
@@ -39,7 +46,47 @@ export const Content = styled.div`
    padding: 0 20px;
 
    & > svg {
-      color: ${({ theme }) => theme.colors.texts.title};
       font-size: 24px;
+   }
+
+   ${(props) =>
+      props.isFocused &&
+      css`
+         color: ${props.theme.colors.orange_700};
+         border-color: ${props.theme.colors.orange_700};
+      `}
+   ${(props) =>
+      props.isFilled &&
+      css`
+         color: ${props.theme.colors.orange_700};
+      `}
+
+      ${(props) =>
+      props.error &&
+      css`
+         color: ${props.theme.colors.red};
+         border-color: ${props.theme.colors.red};
+      `}
+
+      & > .eye {
+      margin-left: 20px;
+      cursor: pointer;
+      color: ${({ theme }) => theme.colors.grey_100};
+
+      &:hover {
+         color: ${({ theme }) => theme.colors.orange_700};
+      }
+   }
+`;
+
+export const Error = styled.div`
+   display: flex;
+   font-size: 13px;
+   align-items: center;
+   margin-top: 7px;
+   color: ${({ theme }) => theme.colors.red};
+
+   svg {
+      margin-right: 10px;
    }
 `;
