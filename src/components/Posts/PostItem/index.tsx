@@ -4,8 +4,6 @@ import { Container, PostHeader, PostContent, PostFooter } from "./styles";
 export function PostItem() {
    return (
       <Container>
-         {" "}
-         /*PostBody*/
          <PostHeader>
             <img
                className="avatar"

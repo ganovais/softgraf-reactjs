@@ -7,7 +7,7 @@ export function SideBar() {
       <Container>
          <ItemList>
             <FiUsers />
-            <Link to="friends">Amigos</Link>
+            <Link to="/friends">Amigos</Link>
          </ItemList>
 
          <ItemList>

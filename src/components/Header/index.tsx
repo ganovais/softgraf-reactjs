@@ -5,7 +5,7 @@ import { Container } from "./styles";
 export function Header() {
    return (
       <Container>
-         <Link to="home">
+         <Link to="/home">
             <img src={logo} alt="logo @socialmedia" />
          </Link>
 
