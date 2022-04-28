@@ -39,6 +39,7 @@ const InputBase: ForwardRefRenderFunction<
 
    const handleInputFocus = useCallback(() => {
       setIsFocused(true);
+      console.log("hello");
    }, []);
 
    const handleInputBlur = (event: any) => {

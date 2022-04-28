@@ -14,27 +14,21 @@ import { CustomInput } from "../../components/Input";
 import { FiLock, FiSend, FiUser } from "react-icons/fi";
 import { Button } from "../../components/Button";
 import { useForm } from "react-hook-form";
-import * as yup from "yup";
+import { object, string } from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 
 interface LoginFormData {
    email: string;
    password: string;
 }
 
-const loginSchema = yup
-   .object({
-      email: yup
-         .string()
-         .required("E-mail obrigatório")
-         .email("E-mail inválido"),
-      password: yup
-         .string()
-         .required("Senha obrigatória")
-         .min(6, "No mínimo 6 caracteres"),
-   })
-   .required();
+const loginSchema = object({
+   email: string().required("E-mail obrigatório").email("E-mail inválido"),
+   password: string()
+      .required("Senha obrigatória")
+      .min(6, "No mínimo 6 caracteres"),
+}).required();
 
 export function Login() {
    const [isShowingPassword, setIsShowingPassword] = useState(false);
@@ -49,6 +43,14 @@ export function Login() {
    const onSubmit = (data: LoginFormData) => {
       console.log(data);
    };
+
+   useLayoutEffect(() => {
+      console.log("useLayoutEffect");
+   }, [isShowingPassword]);
+
+   useEffect(() => {
+      console.log("useEffect");
+   }, [isShowingPassword]);
 
    function showPassword() {
       setIsShowingPassword(!isShowingPassword);
