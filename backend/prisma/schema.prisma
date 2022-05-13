@@ -17,14 +17,21 @@ model Publication {
 
     created_at DateTime @default(now())
     updated_at DateTime @default(now())
-    deleted_at DateTime @default(now())
 
     @@map("publications")
 }
 
 model User {
-    id   Int    @id @default(autoincrement())
-    name String
+    id          Int     @id @default(autoincrement())
+    name        String
+    email       String  @unique
+    password    String
+    description String? @db.Text
+    avatar      String?
+    username    String  @unique
+
+    created_at DateTime @default(now())
+    updated_at DateTime @default(now())
 
     @@map("users")
 }
