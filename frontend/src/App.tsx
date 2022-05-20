@@ -5,6 +5,9 @@ import { Routes } from "./routes";
 import { GlobalStyle } from "./styles/global";
 import { theme_dark } from "./styles/theme_dark";
 import { createTheme, ThemeProvider as MuiProvider } from "@mui/material";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { AppProvider } from "./hooks";
 
 const muiTheme = createTheme({
    palette: {
@@ -26,7 +29,21 @@ function App() {
 
          <BrowserRouter>
             <MuiProvider theme={muiTheme}>
-               <Routes />
+               <AppProvider>
+                  <Routes />
+                  <ToastContainer
+                     position="top-right"
+                     autoClose={5000}
+                     hideProgressBar={false}
+                     newestOnTop={false}
+                     closeOnClick
+                     rtl={false}
+                     pauseOnFocusLoss
+                     draggable
+                     pauseOnHover
+                     theme="dark"
+                  />
+               </AppProvider>
             </MuiProvider>
          </BrowserRouter>
       </ThemeProvider>

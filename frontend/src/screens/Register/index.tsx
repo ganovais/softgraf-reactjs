@@ -17,11 +17,18 @@ import { object, string } from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { api } from "../../services/api";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 interface RegisterFormData {
    name: string;
    email: string;
    password: string;
+}
+
+interface ResponseRegister {
+   error: boolean;
 }
 
 const registerSchema = object({
@@ -33,6 +40,7 @@ const registerSchema = object({
 }).required();
 
 export function Register() {
+   const navigate = useNavigate();
    const [isShowingPassword, setIsShowingPassword] = useState(false);
    const {
       register,
@@ -42,8 +50,19 @@ export function Register() {
       resolver: yupResolver(registerSchema),
    });
 
-   const onSubmit = (data: RegisterFormData) => {
-      console.log(data);
+   const onSubmit = async (dataForm: RegisterFormData) => {
+      const { data } = await api.post("/users", {
+         name: dataForm.name,
+         email: dataForm.email,
+         password: dataForm.password,
+      });
+
+      if (!data.error) {
+         toast.success("Usuário cadastrado com sucesso.");
+         navigate("/");
+      } else {
+         toast.error("Erro ao cadastrar usuário");
+      }
    };
 
    function showPassword() {

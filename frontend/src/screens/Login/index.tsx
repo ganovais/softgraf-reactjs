@@ -17,6 +17,8 @@ import { useForm } from "react-hook-form";
 import { object, string } from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useEffect, useLayoutEffect, useState } from "react";
+import { api } from "../../services/api";
+import { useAuth } from "../../hooks/auth";
 
 interface LoginFormData {
    email: string;
@@ -31,6 +33,7 @@ const loginSchema = object({
 }).required();
 
 export function Login() {
+   const { signIn } = useAuth();
    const [isShowingPassword, setIsShowingPassword] = useState(false);
    const {
       register,
@@ -40,8 +43,8 @@ export function Login() {
       resolver: yupResolver(loginSchema),
    });
 
-   const onSubmit = (data: LoginFormData) => {
-      console.log(data);
+   const onSubmit = async (dataForm: LoginFormData) => {
+      await signIn(dataForm);
    };
 
    useLayoutEffect(() => {

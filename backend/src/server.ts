@@ -3,12 +3,14 @@ import { PrismaClient } from "@prisma/client";
 import { hash, compare } from "bcrypt";
 import { sign } from "jsonwebtoken";
 import "express-async-errors";
+import cors from "cors";
 
 import { ensureAuthenticated } from "./middleware/ensureAuthenticated";
 
 const prisma = new PrismaClient();
 const api = express();
 api.use(express.json());
+api.use(cors());
 
 api.post(
    "/api/publications",
@@ -85,7 +87,7 @@ api.post("/api/users", async (request, response) => {
 
    const passwordHash = await hash(password, 8);
 
-   const user = await prisma.user.create({
+   await prisma.user.create({
       data: {
          name,
          email,
@@ -94,7 +96,7 @@ api.post("/api/users", async (request, response) => {
       },
    });
 
-   return response.send(user);
+   return response.send({ error: false });
 });
 
 api.post("/api/login", async (request, response) => {
@@ -129,8 +131,29 @@ api.post("/api/login", async (request, response) => {
       user: {
          name: user.name,
          email: user.email,
+         username: user.username,
       },
       token,
+   });
+});
+
+api.post("/api/user/me", ensureAuthenticated, async (request, response) => {
+   const user_id = request.user_id;
+
+   const user = await prisma.user.findUnique({
+      where: { id: user_id },
+   });
+
+   if (!user) {
+      throw new Error("Invalid token");
+   }
+
+   return response.send({
+      user: {
+         name: user.name,
+         email: user.email,
+         username: user.username,
+      },
    });
 });
 

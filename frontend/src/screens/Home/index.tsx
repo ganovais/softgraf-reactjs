@@ -13,7 +13,7 @@ export function Home() {
 
    useEffect(() => {
       async function getPosts() {
-         const { data } = await api.get("/posts");
+         const { data } = await api.get("/publications");
          const posts = data.posts.map((post) => ({
             id: post.id,
             author: post.author,
