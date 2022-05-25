@@ -4,24 +4,40 @@ import { hash, compare } from "bcrypt";
 import { sign } from "jsonwebtoken";
 import "express-async-errors";
 import cors from "cors";
+import multer from "multer";
+import { resolve } from "path";
 
 import { ensureAuthenticated } from "./middleware/ensureAuthenticated";
+import uploadConfig from "./config/upload";
+import { deleteFile } from "./utils/file";
 
 const prisma = new PrismaClient();
 const api = express();
 api.use(express.json());
 api.use(cors());
 
+const publication_files = resolve(__dirname, "uploads", "publication");
+const avatar_files = resolve(__dirname, "uploads", "avatar");
+
+api.use("/uploads/publication", express.static(`${publication_files}`));
+api.use("/uploads/avatar", express.static(`${avatar_files}`));
+
+const uploadAvatar = multer(uploadConfig.upload("avatar"));
+const uploadPublication = multer(uploadConfig.upload("publication"));
+
 api.post(
    "/api/publications",
+   uploadPublication.single("file"),
    ensureAuthenticated,
    async (request, response) => {
       const { description } = request.body;
       const user_id = request.user_id;
+      const image = request.file?.filename;
 
       const publication = await prisma.publication.create({
          data: {
             description,
+            image,
             user_id,
          },
       });
@@ -29,6 +45,15 @@ api.post(
       return response.send(publication);
    }
 );
+
+api.get("/api/publications", ensureAuthenticated, async (request, response) => {
+   const publications = await prisma.publication.findMany({
+      include: { user: true, likes: true },
+      orderBy: { created_at: "desc" },
+   });
+
+   return response.send(publications);
+});
 
 api.post("/api/users", async (request, response) => {
    const { name, email, password } = request.body;
@@ -156,6 +181,41 @@ api.post("/api/user/me", ensureAuthenticated, async (request, response) => {
       },
    });
 });
+
+api.patch(
+   "/api/user",
+   uploadAvatar.single("avatar"),
+   ensureAuthenticated,
+   async (request, response) => {
+      const user_id = request.user_id;
+      const avatar_file = request.file?.filename;
+
+      const user = await prisma.user.findUnique({
+         where: { id: user_id },
+      });
+
+      if (!user) {
+         throw new Error("Invalid token");
+      }
+
+      if (user.avatar) {
+         await deleteFile(`/uploads/avatar/${user.avatar}`);
+      }
+
+      const updatedUser = await prisma.user.update({
+         data: {
+            avatar: avatar_file,
+         },
+         where: {
+            id: user_id,
+         },
+      });
+
+      // delete updatedUser.password;
+
+      return response.json(updatedUser);
+   }
+);
 
 api.use(
    (err: Error, request: Request, response: Response, next: NextFunction) => {

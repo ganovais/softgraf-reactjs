@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button } from "../../components/Button";
+import { FiRefreshCw } from "react-icons/fi";
 import { Header } from "../../components/Header";
 import { NewPostInput } from "../../components/NewPostInput";
 import { Posts } from "../../components/Posts";
@@ -14,16 +14,23 @@ export function Home() {
    useEffect(() => {
       async function getPosts() {
          const { data } = await api.get("/publications");
-         const posts = data.posts.map((post) => ({
+
+         console.log(process.env.URL_FILE);
+
+         const posts = data.map((post) => ({
             id: post.id,
-            author: post.author,
-            content: post.content,
+            author: post.user.username,
+            content: post.description,
+            image: process.env.URL_FILE + "publications/" + post.image,
+            likes: post.likes.length,
             created_at: new Date(post.created_at).toLocaleDateString("pt-BR", {
                day: "2-digit",
                month: "long",
                year: "numeric",
             }),
          }));
+
+         console.log(posts);
 
          setPosts(posts);
       }
@@ -46,8 +53,12 @@ export function Home() {
 
             <BodyPosts>
                <NewPostInput />
-               <h1>Postagens</h1>
-               <Button title="refresh" onClick={handleRefreshPosts} />
+
+               <div className="refresh">
+                  <h1>Postagens</h1>
+                  {/* <Button title="refresh" onClick={handleRefreshPosts} /> */}
+                  <FiRefreshCw onClick={handleRefreshPosts} size="30" />
+               </div>
 
                <Posts posts={posts} />
             </BodyPosts>

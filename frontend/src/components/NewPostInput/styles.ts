@@ -30,7 +30,7 @@ export const Container = styled.div`
       }
    }
 
-   & > div {
+   & > .button {
       color: #fff;
       width: 48px;
       height: 48px;
@@ -39,6 +39,11 @@ export const Container = styled.div`
       align-items: center;
       justify-content: center;
       font-size: 24px;
+      cursor: pointer;
+   }
+
+   #file-input {
+      display: none;
    }
 
    .addImage {

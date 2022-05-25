@@ -15,7 +15,19 @@ export const BodyPosts = styled.div`
 
    h1 {
       color: ${({ theme }) => theme.colors.texts.title};
+   }
+
+   .refresh {
       margin-top: 100px;
       margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+
+      & > svg {
+         margin-left: 30px;
+         cursor: pointer;
+         color: ${({ theme }) => theme.colors.orange_800};
+         margin-top: 4px;
+      }
    }
 `;
