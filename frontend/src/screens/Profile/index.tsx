@@ -51,7 +51,9 @@ export function Profile() {
 
    React.useEffect(() => {
       async function profile() {
-         const { data } = await api.get(`/profile/${username}`);
+         const { data } = await api.get(`/users/profile/${username}`);
+
+         console.log(data);
 
          if (data.error) {
             toast.error(data.message);

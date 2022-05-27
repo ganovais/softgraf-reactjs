@@ -17,7 +17,7 @@ export function Friends() {
 
    useEffect(() => {
       async function getFriends() {
-         const { data } = await api.get("friends");
+         const { data } = await api.get("/users/friends");
 
          const friendsFormatted = data.friends.map((friend) => ({
             username: friend.following.username,

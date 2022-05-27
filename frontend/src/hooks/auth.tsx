@@ -47,7 +47,9 @@ function AuthProvider({ children }: AuthProviderProps) {
          }
 
          api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-         const { data } = await api.post("/user/me");
+         const { data } = await api.post("/me");
+
+         console.log(data);
 
          setUser({
             name: data.user.name,

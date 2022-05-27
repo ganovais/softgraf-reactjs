@@ -16,8 +16,7 @@ import { Button } from "../../components/Button";
 import { useForm } from "react-hook-form";
 import { object, string } from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useEffect, useLayoutEffect, useState } from "react";
-import { api } from "../../services/api";
+import { useState } from "react";
 import { useAuth } from "../../hooks/auth";
 
 interface LoginFormData {
