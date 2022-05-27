@@ -217,6 +217,33 @@ api.patch(
    }
 );
 
+api.get("/api/friends", ensureAuthenticated, async (request, response) => {
+   const user_id = request.user_id;
+
+   const friends = await prisma.follows.findMany({
+      where: {
+         follower_id: user_id,
+      },
+      include: { following: true },
+   });
+
+   return response.send({ friends });
+});
+
+api.get("/api/profile/:username", async (request, response) => {
+   const { username } = request.params;
+
+   const user = await prisma.user.findUnique({
+      where: { username },
+   });
+
+   if (!user) {
+      throw new Error("User not found");
+   }
+
+   return response.send({ user });
+});
+
 api.use(
    (err: Error, request: Request, response: Response, next: NextFunction) => {
       return response.status(401).json({

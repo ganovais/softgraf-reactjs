@@ -6,11 +6,19 @@ import { BodyContent, Container, Content } from "./styles";
 import { Header } from "../../components/Header";
 import { SideBar } from "../../components/SideBar";
 import { Posts } from "../../components/Posts";
+import { useParams } from "react-router-dom";
+import { api } from "../../services/api";
+import { toast } from "react-toastify";
 
 interface TabPanelProps {
    children?: React.ReactNode;
    index: number;
    value: number;
+}
+
+interface IUser {
+   name: string;
+   username: string;
 }
 
 function TabPanel(props: TabPanelProps) {
@@ -38,6 +46,23 @@ function a11yProps(index: number) {
 
 export function Profile() {
    const [value, setValue] = React.useState(0);
+   var { username } = useParams();
+   const [user, setUser] = React.useState<IUser>({} as IUser);
+
+   React.useEffect(() => {
+      async function profile() {
+         const { data } = await api.get(`/profile/${username}`);
+
+         if (data.error) {
+            toast.error(data.message);
+            return;
+         }
+
+         setUser(data.user);
+      }
+
+      profile();
+   }, [username]);
 
    const handleChange = (event: React.SyntheticEvent, newValue: number) => {
       setValue(newValue);
@@ -51,8 +76,8 @@ export function Profile() {
             <SideBar />
 
             <BodyContent>
-               <h1 className="name">Gabriel Novais</h1>
-               <b className="username">@ganovais</b>
+               <h1 className="name">{user.name}</h1>
+               <b className="username">@{user.username}</b>
 
                <Box sx={{ width: "100%", padding: "0", marginTop: "20px" }}>
                   <Box sx={{ borderBottom: 1, borderColor: "divider" }}>

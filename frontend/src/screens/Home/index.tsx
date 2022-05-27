@@ -15,13 +15,13 @@ export function Home() {
       async function getPosts() {
          const { data } = await api.get("/publications");
 
-         console.log(process.env.URL_FILE);
-
          const posts = data.map((post) => ({
             id: post.id,
             author: post.user.username,
             content: post.description,
-            image: process.env.URL_FILE + "publications/" + post.image,
+            image: post.image
+               ? process.env.REACT_APP_URL_FILE + "publication/" + post.image
+               : null,
             likes: post.likes.length,
             created_at: new Date(post.created_at).toLocaleDateString("pt-BR", {
                day: "2-digit",
@@ -29,8 +29,6 @@ export function Home() {
                year: "numeric",
             }),
          }));
-
-         console.log(posts);
 
          setPosts(posts);
       }

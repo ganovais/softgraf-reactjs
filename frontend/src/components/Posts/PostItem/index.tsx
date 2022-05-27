@@ -3,7 +3,9 @@ import { Container, PostHeader, PostContent, PostFooter } from "./styles";
 
 interface Post {
    author: string;
-   content: string;
+   content?: string;
+   likes: number;
+   image?: string;
    created_at: string;
 }
 
@@ -26,9 +28,18 @@ export function PostItem({ post }: PostItemProps) {
                <p className="postDate">{post.created_at}</p>
             </div>
          </PostHeader>
-         <PostContent>{post.content}</PostContent>
+         <PostContent>
+            {post.content && <p>{post.content}</p>}
+            {post.image && (
+               <img
+                  className="image-pub"
+                  src={post.image}
+                  alt="Imagem da publicação"
+               />
+            )}
+         </PostContent>
          <PostFooter>
-            <FiHeart /> 32
+            <FiHeart /> {post.likes}
          </PostFooter>
       </Container>
    );

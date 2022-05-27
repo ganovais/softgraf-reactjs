@@ -4,7 +4,9 @@ import { Container } from "./styles";
 interface Post {
    id: string;
    author: string;
-   content: string;
+   content?: string;
+   image?: string;
+   likes: number;
    created_at: string;
 }
 

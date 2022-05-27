@@ -34,6 +34,7 @@ const loginSchema = object({
 
 export function Login() {
    const { signIn } = useAuth();
+   const [loading, setLoading] = useState(false);
    const [isShowingPassword, setIsShowingPassword] = useState(false);
    const {
       register,
@@ -44,16 +45,10 @@ export function Login() {
    });
 
    const onSubmit = async (dataForm: LoginFormData) => {
+      setLoading(true);
       await signIn(dataForm);
+      setLoading(false);
    };
-
-   useLayoutEffect(() => {
-      console.log("useLayoutEffect");
-   }, [isShowingPassword]);
-
-   useEffect(() => {
-      console.log("useEffect");
-   }, [isShowingPassword]);
 
    function showPassword() {
       setIsShowingPassword(!isShowingPassword);
@@ -103,7 +98,12 @@ export function Login() {
 
                <FooterForm>
                   <RegisterLink to="register">Criar uma conta</RegisterLink>
-                  <Button type="submit" title="Entrar" icon={<FiSend />} />
+                  <Button
+                     disabled={loading}
+                     type="submit"
+                     title="Entrar"
+                     icon={<FiSend />}
+                  />
                </FooterForm>
             </Form>
          </DivRight>

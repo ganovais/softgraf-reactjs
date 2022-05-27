@@ -22,6 +22,8 @@ export function NewPostInput() {
       } else {
          toast.error("Erro ao criar sua publicação.");
       }
+
+      setNewPublication("");
    }
 
    async function handleSubmitFile(file) {
@@ -54,6 +56,7 @@ export function NewPostInput() {
          <input
             onChange={(event) => setNewPublication(event.target.value)}
             placeholder="No que está pensando @ganovais"
+            value={newPublication}
          />
 
          <label htmlFor="file-input" className="button addImage">

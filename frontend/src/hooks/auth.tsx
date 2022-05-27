@@ -6,6 +6,7 @@ import {
    useState,
 } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import { api } from "../services/api";
 
 interface User {
@@ -42,6 +43,7 @@ function AuthProvider({ children }: AuthProviderProps) {
 
          if (!token) {
             navigate("/");
+            return;
          }
 
          api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
@@ -53,6 +55,8 @@ function AuthProvider({ children }: AuthProviderProps) {
             username: data.user.username,
             token,
          });
+
+         navigate("/home");
       }
 
       getData();
@@ -63,6 +67,11 @@ function AuthProvider({ children }: AuthProviderProps) {
          email,
          password,
       });
+
+      if (data.error) {
+         toast.warning(data.message);
+         return;
+      }
 
       if (!data.error) {
          setUser({
@@ -80,6 +89,8 @@ function AuthProvider({ children }: AuthProviderProps) {
 
    function signOut() {
       delete api.defaults.headers.common["Authorization"];
+
+      localStorage.removeItem("social@token");
 
       setUser({} as User);
       navigate("/");

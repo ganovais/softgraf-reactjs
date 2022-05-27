@@ -1,8 +1,15 @@
 import { FiLogOut, FiUsers } from "react-icons/fi";
 import { Link } from "react-router-dom";
+import { useAuth } from "../../hooks/auth";
 import { Container, ItemList } from "./styles";
 
 export function SideBar() {
+   const { signOut } = useAuth();
+
+   function handleSignOut() {
+      signOut();
+   }
+
    return (
       <Container>
          <ItemList>
@@ -10,7 +17,7 @@ export function SideBar() {
             <Link to="/friends">Amigos</Link>
          </ItemList>
 
-         <ItemList>
+         <ItemList onClick={handleSignOut}>
             <FiLogOut />
             <p>Sair</p>
          </ItemList>
