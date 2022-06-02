@@ -9,8 +9,6 @@ export class AuthController {
    constructor() {}
 
    async login(request: Request, response: Response) {
-      console.log("login");
-
       const { email, password } = request.body;
 
       const user = await prisma.user.findUnique({
