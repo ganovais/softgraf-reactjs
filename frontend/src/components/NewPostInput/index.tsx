@@ -4,7 +4,10 @@ import { toast } from "react-toastify";
 import { api } from "../../services/api";
 import { Container } from "./styles";
 
-export function NewPostInput() {
+interface NewPostInputProps {
+   reloadPosts: () => void;
+}
+export function NewPostInput({ reloadPosts }: NewPostInputProps) {
    const [newPublication, setNewPublication] = useState("");
 
    async function handleSubmit() {
@@ -19,6 +22,7 @@ export function NewPostInput() {
 
       if (data?.id) {
          toast.success("Publicação criada com sucesso.");
+         reloadPosts();
       } else {
          toast.error("Erro ao criar sua publicação.");
       }
