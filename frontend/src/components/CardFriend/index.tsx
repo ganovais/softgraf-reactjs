@@ -1,6 +1,7 @@
 import { FiTrash2 } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
-import { Avatar, Container } from "./styles";
+import { CustomAvatar } from "../Avatar";
+import { Container } from "./styles";
 
 interface IFriend {
    name: string;
@@ -17,11 +18,11 @@ export function CardFriend({ friend }: CardFriendProps) {
 
    return (
       <Container>
-         {friend.avatar ? (
-            <img src={friend.avatar} alt="Imagem do perfil" />
-         ) : (
-            <Avatar>{friend.name[0] + friend.name[1]}</Avatar>
-         )}
+         <CustomAvatar
+            username={friend.username}
+            avatar={friend.avatar}
+            name={friend.name}
+         />
 
          <div className="info">
             <p

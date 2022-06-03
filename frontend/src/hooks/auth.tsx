@@ -14,6 +14,8 @@ interface User {
    name: string;
    email: string;
    username: string;
+   avatar?: string;
+   description?: string;
 }
 
 interface SignInProps {
@@ -53,6 +55,8 @@ function AuthProvider({ children }: AuthProviderProps) {
                name: data.user.name,
                email: data.user.email,
                username: data.user.username,
+               avatar: data.user.avatar,
+               description: data.user.description,
                token,
             });
 
@@ -83,6 +87,8 @@ function AuthProvider({ children }: AuthProviderProps) {
             name: data.user.name,
             email: data.user.email,
             username: data.user.username,
+            avatar: data.user.avatar,
+            description: data.user.description,
          });
 
          localStorage.setItem("social@token", data.token);

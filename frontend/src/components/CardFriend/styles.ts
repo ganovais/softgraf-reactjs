@@ -16,13 +16,6 @@ export const Container = styled.div`
       cursor: pointer;
    }
 
-   img {
-      width: 48px;
-      height: 48px;
-      border-radius: 24px;
-      margin-right: 10px;
-   }
-
    .name {
       color: ${({ theme }) => theme.colors.texts.title};
    }
@@ -32,20 +25,4 @@ export const Container = styled.div`
       font-weight: bold;
       font-size: 0.85rem;
    }
-`;
-
-export const Avatar = styled.div`
-   width: 48px;
-   height: 48px;
-   border-radius: 24px;
-   margin-right: 10px;
-
-   font-size: 18px;
-   font-weight: bold;
-   background-color: ${({ theme }) => theme.colors.orange_700};
-   color: ${({ theme }) => theme.colors.grey_100};
-
-   display: flex;
-   align-items: center;
-   justify-content: center;
 `;

@@ -6,14 +6,7 @@ export const Container = styled.div`
    align-items: center;
    justify-content: space-between;
 
-   img:first-child {
+   & > a > img:first-child {
       width: 200px;
-   }
-
-   .avatar {
-      width: 80px;
-      height: 80px;
-      border-radius: 40px;
-      cursor: pointer;
    }
 `;
