@@ -16,6 +16,7 @@ export function Friends() {
    const [friends, setFriends] = useState<IFriend[]>([]);
 
    useEffect(() => {
+      document.title = "Listagem de Amigos";
       async function getFriends() {
          const { data } = await api.get("/users/friends");
 

@@ -4,6 +4,16 @@ import { deleteFile } from "../utils/file";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
+
+function exclude<User, Key extends keyof User>(
+   user: User,
+   ...keys: Key[]
+): Omit<User, Key> {
+   for (let key of keys) {
+      delete user[key];
+   }
+   return user;
+}
 export class UserController {
    constructor() {}
 
@@ -133,7 +143,7 @@ export class UserController {
          },
       });
 
-      // delete updatedUser.password;
+      exclude(updatedUser, "password");
 
       return response.json(updatedUser);
    }
