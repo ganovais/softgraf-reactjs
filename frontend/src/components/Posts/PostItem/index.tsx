@@ -1,8 +1,15 @@
 import { FiHeart } from "react-icons/fi";
+import { CustomAvatar } from "../../Avatar";
 import { Container, PostHeader, PostContent, PostFooter } from "./styles";
 
+interface User {
+   name: string;
+   username: string;
+   avatar: string;
+}
+
 interface Post {
-   author: string;
+   user: User;
    content?: string;
    likes: number;
    image?: string;
@@ -17,14 +24,14 @@ export function PostItem({ post }: PostItemProps) {
    return (
       <Container>
          <PostHeader>
-            <img
-               className="avatar"
-               src="https://avatars.githubusercontent.com/u/24701969?v=4"
-               alt="logo socialmedia"
+            <CustomAvatar
+               username={post.user.username}
+               name={post.user.name}
+               avatar={post.user.avatar}
             />
 
             <div>
-               <p className="username">@{post.author}</p>
+               <p className="username">@{post.user.username}</p>
                <p className="postDate">{post.created_at}</p>
             </div>
          </PostHeader>

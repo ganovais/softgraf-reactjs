@@ -15,7 +15,7 @@ export function Home() {
 
       const posts = data.map((post) => ({
          id: post.id,
-         author: post.user.username,
+         user: post.user,
          content: post.description,
          image: post.image
             ? process.env.REACT_APP_URL_FILE + "publication/" + post.image

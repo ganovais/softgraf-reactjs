@@ -12,24 +12,17 @@ import {
 } from "./styles";
 import { Header } from "../../components/Header";
 import { SideBar } from "../../components/SideBar";
-import { Posts } from "../../components/Posts";
-import { useParams } from "react-router-dom";
-import { api } from "../../services/api";
 import { toast } from "react-toastify";
 import { CustomInput } from "../../components/Input";
 import { FiArrowLeft, FiLock, FiMail, FiSave, FiUser } from "react-icons/fi";
 import { Button } from "../../components/Button";
 import { useAuth } from "../../hooks/auth";
+import { api } from "../../services/api";
 
 interface TabPanelProps {
    children?: React.ReactNode;
    index: number;
    value: number;
-}
-
-interface IUser {
-   name: string;
-   username: string;
 }
 
 function TabPanel(props: TabPanelProps) {
@@ -59,6 +52,9 @@ export function ProfileMe() {
    const [isShowingPassword, setIsShowingPassword] = React.useState(false);
    const [value, setValue] = React.useState(0);
    const { user } = useAuth();
+   const [description, setDescription] = React.useState(user.description);
+   const [password, setPassword] = React.useState("");
+   const [confirmPassword, setConfirmPassword] = React.useState("");
 
    const handleChange = (event: React.SyntheticEvent, newValue: number) => {
       setValue(newValue);
@@ -68,8 +64,26 @@ export function ProfileMe() {
       setIsShowingPassword(!isShowingPassword);
    }
 
-   function handleSubmit() {
-      console.log("submit");
+   async function handleSubmit(e) {
+      e.preventDefault();
+      console.log(description, password, confirmPassword);
+      if (password && password.length < 6) {
+         toast.warn("Senha deve ter pelo menos 6 caracteres");
+         return;
+      }
+
+      if (password !== confirmPassword) {
+         toast.warn("As senhas são diferentes");
+         return;
+      }
+
+      const data = {
+         description,
+         password,
+      };
+
+      const response = await api.put("/users", data);
+      console.log(response);
    }
 
    return (
@@ -107,7 +121,10 @@ export function ProfileMe() {
                               <label>Sobre</label>
                               <textarea
                                  placeholder="Sobre mim"
-                                 defaultValue={user.description || "Sobre mim"}
+                                 defaultValue={user.description}
+                                 onChange={(event) =>
+                                    setDescription(event.target.value)
+                                 }
                               ></textarea>
                            </div>
 
@@ -139,6 +156,9 @@ export function ProfileMe() {
                                     leftIcon={<FiLock />}
                                     showPassword={showPassword}
                                     isShowingPassword={isShowingPassword}
+                                    onChange={(event) =>
+                                       setPassword(event.target.value)
+                                    }
                                  />
 
                                  <CustomInput
@@ -150,6 +170,9 @@ export function ProfileMe() {
                                     leftIcon={<FiLock />}
                                     showPassword={showPassword}
                                     isShowingPassword={isShowingPassword}
+                                    onChange={(event) =>
+                                       setConfirmPassword(event.target.value)
+                                    }
                                  />
                               </div>
                            </div>
@@ -162,7 +185,7 @@ export function ProfileMe() {
                            </RegisterLink>
                            <Button
                               type="submit"
-                              title="Cadastrar"
+                              title="Editar"
                               icon={<FiSave />}
                            />
                         </FooterForm>

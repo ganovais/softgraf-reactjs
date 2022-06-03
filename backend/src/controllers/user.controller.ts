@@ -78,6 +78,36 @@ export class UserController {
       return response.send({ error: false });
    }
 
+   async update(request: Request, response: Response) {
+      const user_id = request.user_id;
+      const { description, password } = request.body;
+      let passwordHash = "";
+
+      const user = await prisma.user.findUnique({
+         where: { id: user_id },
+      });
+
+      if (!user) {
+         throw new Error("Invalid token");
+      }
+
+      if (password) {
+         passwordHash = await hash(password, 8);
+      }
+
+      const updatedUser = await prisma.user.update({
+         data: {
+            description: description || user.description,
+            password: passwordHash || user.password,
+         },
+         where: {
+            id: user_id,
+         },
+      });
+
+      return response.json(updatedUser);
+   }
+
    async updateAvatar(request: Request, response: Response) {
       const user_id = request.user_id;
       const avatar_file = request.file?.filename;

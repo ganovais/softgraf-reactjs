@@ -1,9 +1,15 @@
 import { PostItem } from "./PostItem";
 import { Container } from "./styles";
 
+interface User {
+   name: string;
+   username: string;
+   avatar: string;
+}
+
 interface Post {
    id: string;
-   author: string;
+   user: User;
    content?: string;
    image?: string;
    likes: number;

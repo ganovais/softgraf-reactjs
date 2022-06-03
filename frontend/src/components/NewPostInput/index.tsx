@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { FiImage, FiSend } from "react-icons/fi";
 import { toast } from "react-toastify";
+import { useAuth } from "../../hooks/auth";
 import { api } from "../../services/api";
+import { CustomAvatar } from "../Avatar";
 import { Container } from "./styles";
 
 interface NewPostInputProps {
@@ -9,6 +11,8 @@ interface NewPostInputProps {
 }
 export function NewPostInput({ reloadPosts }: NewPostInputProps) {
    const [newPublication, setNewPublication] = useState("");
+   const { user } = useAuth();
+   const placeholder = `No que está pensando @${user.username}`;
 
    async function handleSubmit() {
       if (!newPublication) {
@@ -51,15 +55,15 @@ export function NewPostInput({ reloadPosts }: NewPostInputProps) {
 
    return (
       <Container>
-         <img
-            className="avatar"
-            src="https://avatars.githubusercontent.com/u/24701969?v=4"
-            alt="logo socialmedia"
+         <CustomAvatar
+            avatar={user.avatar}
+            username={user.username}
+            name={user.name}
          />
 
          <input
             onChange={(event) => setNewPublication(event.target.value)}
-            placeholder="No que está pensando @ganovais"
+            placeholder={placeholder}
             value={newPublication}
          />
 

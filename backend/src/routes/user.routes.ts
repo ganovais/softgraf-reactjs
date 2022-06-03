@@ -24,4 +24,6 @@ userRoutes.patch(
    userController.updateAvatar
 );
 
+userRoutes.put("/", ensureAuthenticated, userController.update);
+
 export default userRoutes;
