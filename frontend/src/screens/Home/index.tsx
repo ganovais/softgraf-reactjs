@@ -12,21 +12,29 @@ export function Home() {
 
    async function getPosts() {
       const { data } = await api.get("/publications");
+      const { data: likes } = await api.get("/users/likes");
 
-      const posts = data.map((post) => ({
-         id: post.id,
-         user: post.user,
-         content: post.description,
-         image: post.image
-            ? process.env.REACT_APP_URL_FILE + "publication/" + post.image
-            : null,
-         likes: post.likes.length,
-         created_at: new Date(post.created_at).toLocaleDateString("pt-BR", {
-            day: "2-digit",
-            month: "long",
-            year: "numeric",
-         }),
-      }));
+      const posts = data.map((post) => {
+         const meLiked = likes.likes.some(
+            (like) => like.publication_id === post.id
+         );
+
+         return {
+            id: post.id,
+            user: post.user,
+            content: post.description,
+            image: post.image
+               ? process.env.REACT_APP_URL_FILE + "publication/" + post.image
+               : null,
+            likes: post.likes.length,
+            created_at: new Date(post.created_at).toLocaleDateString("pt-BR", {
+               day: "2-digit",
+               month: "long",
+               year: "numeric",
+            }),
+            meLiked,
+         };
+      });
 
       setPosts(posts);
    }

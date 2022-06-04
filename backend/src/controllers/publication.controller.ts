@@ -29,4 +29,36 @@ export class PublicationController {
 
       return response.send(publications);
    }
+
+   async like(request: Request, response: Response) {
+      const user_id = request.user_id;
+      const { publication_id } = request.body;
+      let type = "minus";
+
+      const exists = await prisma.likes.findFirst({
+         where: {
+            publication_id,
+            user_id,
+         },
+      });
+
+      if (exists) {
+         await prisma.likes.deleteMany({
+            where: {
+               publication_id,
+               user_id,
+            },
+         });
+      } else {
+         await prisma.likes.create({
+            data: {
+               publication_id,
+               user_id,
+            },
+         });
+         type = "plus";
+      }
+
+      return response.send({ error: false, type });
+   }
 }

@@ -18,4 +18,10 @@ publicationRoutes.post(
 
 publicationRoutes.get("/", ensureAuthenticated, publicationController.listAll);
 
+publicationRoutes.post(
+   "/like",
+   ensureAuthenticated,
+   publicationController.like
+);
+
 export default publicationRoutes;

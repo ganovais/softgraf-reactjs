@@ -5,10 +5,10 @@ import Box from "@mui/material/Box";
 import { BodyContent, Container, Content } from "./styles";
 import { Header } from "../../components/Header";
 import { SideBar } from "../../components/SideBar";
-import { Posts } from "../../components/Posts";
 import { useParams } from "react-router-dom";
 import { api } from "../../services/api";
 import { toast } from "react-toastify";
+import { Posts } from "../../components/Posts";
 
 interface TabPanelProps {
    children?: React.ReactNode;
@@ -19,6 +19,7 @@ interface TabPanelProps {
 interface IUser {
    name: string;
    username: string;
+   description: string;
 }
 
 function TabPanel(props: TabPanelProps) {
@@ -48,19 +49,46 @@ export function Profile() {
    const [value, setValue] = React.useState(0);
    var { username } = useParams();
    const [user, setUser] = React.useState<IUser>({} as IUser);
+   const [posts, setPosts] = React.useState([]);
 
    React.useEffect(() => {
       async function profile() {
          const { data } = await api.get(`/users/profile/${username}`);
-
-         console.log(data);
 
          if (data.error) {
             toast.error(data.message);
             return;
          }
 
+         const { data: likes } = await api.get("/users/likes");
+
+         const posts = data.user.publications.map((post) => {
+            const meLiked = likes.likes.some(
+               (like) => like.publication_id === post.id
+            );
+
+            return {
+               id: post.id,
+               user: post.user,
+               content: post.description,
+               image: post.image
+                  ? process.env.REACT_APP_URL_FILE + "publication/" + post.image
+                  : null,
+               likes: post.likes.length,
+               created_at: new Date(post.created_at).toLocaleDateString(
+                  "pt-BR",
+                  {
+                     day: "2-digit",
+                     month: "long",
+                     year: "numeric",
+                  }
+               ),
+               meLiked,
+            };
+         });
+
          setUser(data.user);
+         setPosts(posts);
       }
 
       profile();
@@ -101,15 +129,16 @@ export function Profile() {
                   <TabPanel value={value} index={0}>
                      <h4>Descrição</h4>
                      <p>
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                        Blanditiis excepturi doloremque, nulla praesentium
-                        minima ut at voluptas, ab sit illum aliquam tempora fuga
-                        fugit assumenda? Unde nulla soluta in facilis.
+                        {user.description
+                           ? user.description
+                           : "Este usuário não informou uma descrição ainda"}
                      </p>
                   </TabPanel>
                   <TabPanel value={value} index={1}>
                      {/* <Posts /> */}
                      <h1>Posts</h1>
+
+                     <Posts posts={posts} />
                   </TabPanel>
                </Box>
             </BodyContent>

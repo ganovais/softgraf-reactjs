@@ -115,6 +115,8 @@ export class UserController {
          },
       });
 
+      exclude(updatedUser, "password");
+
       return response.json(updatedUser);
    }
 
@@ -161,11 +163,24 @@ export class UserController {
       return response.send({ friends });
    }
 
+   async getLikes(request: Request, response: Response) {
+      const user_id = request.user_id;
+
+      const likes = await prisma.likes.findMany({
+         where: {
+            user_id,
+         },
+      });
+
+      return response.send({ likes });
+   }
+
    async profile(request: Request, response: Response) {
       const { username } = request.params;
 
       const user = await prisma.user.findUnique({
          where: { username },
+         include: { publications: { include: { likes: true, user: true } } },
       });
 
       if (!user) {

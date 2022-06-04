@@ -30,6 +30,10 @@ export const PostContent = styled.div`
    margin-top: 40px;
    margin-bottom: 40px;
    color: #fff;
+
+   img {
+      width: 80%;
+   }
 `;
 export const PostFooter = styled.div`
    display: flex;
@@ -38,6 +42,6 @@ export const PostFooter = styled.div`
 
    svg {
       margin-right: 10px;
-      color: #e94a4a;
+      cursor: pointer;
    }
 `;

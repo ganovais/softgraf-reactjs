@@ -25,5 +25,6 @@ userRoutes.patch(
 );
 
 userRoutes.put("/", ensureAuthenticated, userController.update);
+userRoutes.get("/likes", ensureAuthenticated, userController.getLikes);
 
 export default userRoutes;

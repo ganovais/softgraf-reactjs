@@ -8,12 +8,13 @@ interface User {
 }
 
 interface Post {
-   id: string;
+   id: number;
    user: User;
    content?: string;
    image?: string;
    likes: number;
    created_at: string;
+   meLiked: boolean;
 }
 
 interface PostsProps {

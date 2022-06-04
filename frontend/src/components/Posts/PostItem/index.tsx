@@ -1,4 +1,6 @@
+import { useState } from "react";
 import { FiHeart } from "react-icons/fi";
+import { api } from "../../../services/api";
 import { CustomAvatar } from "../../Avatar";
 import { Container, PostHeader, PostContent, PostFooter } from "./styles";
 
@@ -9,11 +11,13 @@ interface User {
 }
 
 interface Post {
+   id: number;
    user: User;
    content?: string;
    likes: number;
    image?: string;
    created_at: string;
+   meLiked: boolean;
 }
 
 interface PostItemProps {
@@ -21,6 +25,24 @@ interface PostItemProps {
 }
 
 export function PostItem({ post }: PostItemProps) {
+   const [likes, setLikes] = useState(post.likes);
+   const [meLiked, setMeLiked] = useState(post.meLiked);
+
+   async function handleLike(id) {
+      const publication_id = id;
+      const { data } = await api.post("/publications/like", { publication_id });
+
+      if (!data.error) {
+         if (data.type === "minus") {
+            setLikes(likes - 1);
+            setMeLiked(false);
+         } else {
+            setLikes(likes + 1);
+            setMeLiked(true);
+         }
+      }
+   }
+
    return (
       <Container>
          <PostHeader>
@@ -46,7 +68,11 @@ export function PostItem({ post }: PostItemProps) {
             )}
          </PostContent>
          <PostFooter>
-            <FiHeart /> {post.likes}
+            <FiHeart
+               color={meLiked ? "#e94a4a" : "#ccc"}
+               onClick={() => handleLike(post.id)}
+            />{" "}
+            {likes}
          </PostFooter>
       </Container>
    );
