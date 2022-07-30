@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import { CardFriend } from "../../components/CardFriend";
 import { Header } from "../../components/Header";
 import { SideBar } from "../../components/SideBar";
@@ -20,11 +21,16 @@ export function Friends() {
       async function getFriends() {
          const { data } = await api.get("/users/friends");
 
+         data.friends = [
+            ...data.friends.followings.map((item) => item.follower),
+            ...data.friends.followed_by.map((item) => item.following),
+         ];
+
          const friendsFormatted = data.friends.map((friend) => ({
-            username: friend.following.username,
-            name: friend.following.name,
-            avatar: friend.following.avatar,
-            id: friend.following.id,
+            username: friend.username,
+            name: friend.name,
+            avatar: friend.avatar,
+            id: friend.id,
          }));
 
          setFriends(friendsFormatted);
@@ -32,6 +38,25 @@ export function Friends() {
 
       getFriends();
    }, []);
+
+   async function removeFriend(friend_id) {
+      const { data } = await api.post("/users/friends/remove", {
+         friend_id,
+      });
+
+      if (!data.error) {
+         toast.success("Amigo removido com sucesso");
+         const newList = [...friends];
+         const index = newList.findIndex((friend) => friend.id === friend_id);
+
+         if (index > -1) {
+            newList.splice(index, 1);
+            setFriends(newList);
+         }
+      } else {
+         toast.warning("Vocês já são amigos");
+      }
+   }
 
    return (
       <Container>
@@ -46,7 +71,11 @@ export function Friends() {
                {friends.length ? (
                   <ListFriends>
                      {friends.map((friend) => (
-                        <CardFriend key={friend.id} friend={friend} />
+                        <CardFriend
+                           removeFriend={removeFriend}
+                           key={friend.id}
+                           friend={friend}
+                        />
                      ))}
                   </ListFriends>
                ) : (

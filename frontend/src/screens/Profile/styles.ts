@@ -30,3 +30,9 @@ export const BodyContent = styled.div`
       font-weight: bold;
    }
 `;
+
+export const HeaderProfile = styled.div`
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+`;

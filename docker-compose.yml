@@ -5,6 +5,7 @@ services:
     image: mysql:5.7-oracle
     restart: always
     tty: true
+    platform: linux/x86_64
     ports:
       - 3306:3306
     container_name: 'social_media_db_1'

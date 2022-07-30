@@ -48,6 +48,7 @@ export function NewPostInput({ reloadPosts }: NewPostInputProps) {
 
       if (data?.id) {
          toast.success("Publicação criada com sucesso.");
+         reloadPosts();
       } else {
          toast.error("Erro ao criar sua publicação.");
       }

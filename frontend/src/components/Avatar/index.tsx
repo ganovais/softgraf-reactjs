@@ -6,13 +6,20 @@ interface CustomAvatarProps {
    avatar?: string;
    name: string;
    username: string;
+   closeModal?: () => void;
 }
 
-export function CustomAvatar({ avatar, name, username }: CustomAvatarProps) {
+export function CustomAvatar({
+   avatar,
+   name,
+   username,
+   closeModal = () => {},
+}: CustomAvatarProps) {
    const { user } = useAuth();
    const navigate = useNavigate();
 
    function handleNavigate() {
+      closeModal();
       if (user.username === username) {
          navigate("/profile/me");
       } else {

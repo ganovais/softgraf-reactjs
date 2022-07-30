@@ -2,13 +2,15 @@ import * as React from "react";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
-import { BodyContent, Container, Content } from "./styles";
+import { BodyContent, Container, Content, HeaderProfile } from "./styles";
 import { Header } from "../../components/Header";
 import { SideBar } from "../../components/SideBar";
 import { useParams } from "react-router-dom";
 import { api } from "../../services/api";
 import { toast } from "react-toastify";
 import { Posts } from "../../components/Posts";
+import { Button } from "../../components/Button";
+import { FiUserMinus, FiUserPlus } from "react-icons/fi";
 
 interface TabPanelProps {
    children?: React.ReactNode;
@@ -17,9 +19,12 @@ interface TabPanelProps {
 }
 
 interface IUser {
+   id: number;
    name: string;
    username: string;
    description: string;
+   followings?: [];
+   followed_by?: [];
 }
 
 function TabPanel(props: TabPanelProps) {
@@ -50,6 +55,7 @@ export function Profile() {
    var { username } = useParams();
    const [user, setUser] = React.useState<IUser>({} as IUser);
    const [posts, setPosts] = React.useState([]);
+   const [isFriend, setIsFriend] = React.useState(false);
 
    React.useEffect(() => {
       async function profile() {
@@ -59,6 +65,10 @@ export function Profile() {
             toast.error(data.message);
             return;
          }
+
+         setIsFriend(
+            data.user.followed_by.length || data.user.followings.length
+         );
 
          const { data: likes } = await api.get("/users/likes");
 
@@ -98,6 +108,34 @@ export function Profile() {
       setValue(newValue);
    };
 
+   async function handleAddFriend() {
+      const { data } = await api.post("/users/friends", {
+         friend_id: user.id,
+      });
+
+      if (!data.error) {
+         toast.success("Amigo adicionado com sucesso");
+      } else {
+         toast.warning("Vocês já são amigos");
+      }
+
+      setIsFriend(true);
+   }
+
+   async function handleRemoveFriend() {
+      const { data } = await api.post("/users/friends/remove", {
+         friend_id: user.id,
+      });
+
+      if (!data.error) {
+         toast.success("Amigo removido com sucesso");
+      } else {
+         toast.warning("Vocês já são amigos");
+      }
+
+      setIsFriend(false);
+   }
+
    return (
       <Container>
          <Header />
@@ -105,43 +143,65 @@ export function Profile() {
          <Content>
             <SideBar />
 
-            <BodyContent>
-               <h1 className="name">{user.name}</h1>
-               <b className="username">@{user.username}</b>
+            {user.id ? (
+               <BodyContent>
+                  <HeaderProfile>
+                     <div>
+                        <h1 className="name">{user.name}</h1>
+                        <b className="username">@{user.username}</b>
+                     </div>
 
-               <Box sx={{ width: "100%", padding: "0", marginTop: "20px" }}>
-                  <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-                     <Tabs
-                        value={value}
-                        onChange={handleChange}
-                        aria-label="basic tabs example"
-                        textColor="primary"
-                        indicatorColor="primary"
-                     >
-                        <Tab
-                           sx={{ paddingLeft: "0" }}
-                           label="Informações"
-                           {...a11yProps(0)}
+                     {isFriend ? (
+                        <Button
+                           onClick={handleRemoveFriend}
+                           title="Remover amigo"
+                           icon={<FiUserMinus />}
                         />
-                        <Tab label="Publicações" {...a11yProps(1)} />
-                     </Tabs>
-                  </Box>
-                  <TabPanel value={value} index={0}>
-                     <h4>Descrição</h4>
-                     <p>
-                        {user.description
-                           ? user.description
-                           : "Este usuário não informou uma descrição ainda"}
-                     </p>
-                  </TabPanel>
-                  <TabPanel value={value} index={1}>
-                     {/* <Posts /> */}
-                     <h1>Posts</h1>
+                     ) : (
+                        <Button
+                           onClick={handleAddFriend}
+                           title="Adicionar amigo"
+                           icon={<FiUserPlus />}
+                        />
+                     )}
+                  </HeaderProfile>
 
-                     <Posts posts={posts} />
-                  </TabPanel>
-               </Box>
-            </BodyContent>
+                  <Box sx={{ width: "100%", padding: "0", marginTop: "20px" }}>
+                     <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+                        <Tabs
+                           value={value}
+                           onChange={handleChange}
+                           aria-label="basic tabs example"
+                           textColor="primary"
+                           indicatorColor="primary"
+                        >
+                           <Tab
+                              sx={{ paddingLeft: "0" }}
+                              label="Informações"
+                              {...a11yProps(0)}
+                           />
+                           <Tab label="Publicações" {...a11yProps(1)} />
+                        </Tabs>
+                     </Box>
+                     <TabPanel value={value} index={0}>
+                        <h4>Descrição</h4>
+                        <p>
+                           {user.description
+                              ? user.description
+                              : "Este usuário não informou uma descrição ainda"}
+                        </p>
+                     </TabPanel>
+                     <TabPanel value={value} index={1}>
+                        {/* <Posts /> */}
+                        <h1>Posts</h1>
+
+                        <Posts posts={posts} />
+                     </TabPanel>
+                  </Box>
+               </BodyContent>
+            ) : (
+               <h3>Carregando...</h3>
+            )}
          </Content>
       </Container>
    );

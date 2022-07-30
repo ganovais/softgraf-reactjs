@@ -16,6 +16,13 @@ userRoutes.get(
    userController.profile
 );
 userRoutes.get("/friends", ensureAuthenticated, userController.getMyFriends);
+userRoutes.get("/", ensureAuthenticated, userController.getUsers);
+userRoutes.post("/friends", ensureAuthenticated, userController.addFriend);
+userRoutes.post(
+   "/friends/remove",
+   ensureAuthenticated,
+   userController.removeFriend
+);
 userRoutes.post("/", userController.create);
 userRoutes.patch(
    "/",

@@ -153,14 +153,112 @@ export class UserController {
    async getMyFriends(request: Request, response: Response) {
       const user_id = request.user_id;
 
-      const friends = await prisma.follows.findMany({
+      const friends = await prisma.user.findUnique({
          where: {
-            follower_id: user_id,
+            id: user_id,
          },
-         include: { following: true },
+         include: {
+            followings: {
+               include: { follower: true },
+               where: {
+                  OR: [
+                     {
+                        following_id: user_id,
+                     },
+                     {
+                        follower_id: user_id,
+                     },
+                  ],
+               },
+            },
+            followed_by: {
+               include: { following: true },
+               where: {
+                  OR: [
+                     {
+                        following_id: user_id,
+                     },
+                     {
+                        follower_id: user_id,
+                     },
+                  ],
+               },
+            },
+         },
       });
 
       return response.send({ friends });
+   }
+
+   async getUsers(request: Request, response: Response) {
+      const { username } = request.query;
+      const user_id = request.user_id;
+
+      const users = await prisma.user.findMany({
+         where: {
+            username: {
+               contains: String(username),
+            },
+            id: {
+               not: user_id,
+            },
+         },
+      });
+
+      return response.send(users);
+   }
+
+   async addFriend(request: Request, response: Response) {
+      const { friend_id } = request.body;
+      const user_id = request.user_id;
+
+      try {
+         await prisma.follows.create({
+            data: {
+               follower_id: user_id,
+               following_id: friend_id,
+            },
+         });
+      } catch (error: any) {
+         if (error.code === "P2002") {
+            return response.send({
+               error: true,
+               message: "Vocês já são amigos",
+            });
+         }
+      }
+
+      return response.send({ error: false });
+   }
+
+   async removeFriend(request: Request, response: Response) {
+      const { friend_id } = request.body;
+      const user_id = request.user_id;
+
+      try {
+         await prisma.follows.deleteMany({
+            where: {
+               OR: [
+                  {
+                     follower_id: friend_id,
+                     following_id: user_id,
+                  },
+                  {
+                     follower_id: user_id,
+                     following_id: friend_id,
+                  },
+               ],
+            },
+         });
+      } catch (error: any) {
+         if (error.code === "P2002") {
+            return response.send({
+               error: true,
+            });
+         }
+      }
+
+      return response.send({ error: false });
    }
 
    async getLikes(request: Request, response: Response) {
@@ -177,10 +275,23 @@ export class UserController {
 
    async profile(request: Request, response: Response) {
       const { username } = request.params;
+      const user_id = request.user_id;
 
       const user = await prisma.user.findUnique({
          where: { username },
-         include: { publications: { include: { likes: true, user: true } } },
+         include: {
+            publications: { include: { likes: true, user: true } },
+            followings: {
+               where: {
+                  follower_id: user_id,
+               },
+            },
+            followed_by: {
+               where: {
+                  following_id: user_id,
+               },
+            },
+         },
       });
 
       if (!user) {

@@ -11,10 +11,15 @@ interface IFriend {
 }
 interface CardFriendProps {
    friend: IFriend;
+   removeFriend: (friend_id: number) => void;
 }
 
-export function CardFriend({ friend }: CardFriendProps) {
+export function CardFriend({ friend, removeFriend }: CardFriendProps) {
    const navigate = useNavigate();
+
+   async function handleRemoveFriend(friend_id) {
+      removeFriend(friend_id);
+   }
 
    return (
       <Container>
@@ -34,7 +39,7 @@ export function CardFriend({ friend }: CardFriendProps) {
             <p className="username">@{friend.username}</p>
          </div>
 
-         <FiTrash2 />
+         <FiTrash2 onClick={() => handleRemoveFriend(friend.id)} />
       </Container>
    );
 }

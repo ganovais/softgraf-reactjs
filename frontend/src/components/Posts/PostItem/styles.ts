@@ -30,9 +30,10 @@ export const PostContent = styled.div`
    margin-top: 40px;
    margin-bottom: 40px;
    color: #fff;
+   display: flex;
 
    img {
-      width: 80%;
+      width: 400px;
    }
 `;
 export const PostFooter = styled.div`

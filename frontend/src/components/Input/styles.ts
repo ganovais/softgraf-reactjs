@@ -28,7 +28,7 @@ export const Input = styled.input`
    }
 `;
 
-export const Label = styled.div`
+export const Label = styled.p`
    font-size: 14px;
    color: ${({ theme }) => theme.colors.texts.label};
    margin-bottom: 8px;
@@ -36,7 +36,6 @@ export const Label = styled.div`
 
 export const Content = styled.div<ContentProps>`
    background: ${({ theme }) => theme.colors.grey_50};
-   opacity: 0.8;
    border: 2px solid transparent;
    height: 60px;
    width: 100%;
